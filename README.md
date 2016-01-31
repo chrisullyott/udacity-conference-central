@@ -31,6 +31,12 @@ App Engine application for Udacity course `ud858`.
 [5]: https://localhost:8080/
 [6]: https://developers.google.com/appengine/docs/python/endpoints/endpoints_tool
 
+## Loading the APIs Explorer
+
+**2016-01-30:** It has been discovered recently by the Udacity FSND community that the APIs explorer may not load in Google Chrome, even after allowing unsecure scripts in the browser. The API seems to load in Mozilla Firefox.
+
+Forum post: [API Explorer Not Showing on Localhost](https://discussions.udacity.com/t/api-explorer-not-showing-on-localhost)
+
 ## Written Questions
 
 ##### What were your design choices for session and speaker implementation?
