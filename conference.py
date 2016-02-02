@@ -610,7 +610,7 @@ class ConferenceApi(remote.Service):
             http_method='GET',
             name='getWishlistSessionsBySpeaker')
     def getWishlistSessionsBySpeaker(self, request):
-        """Get a list of sessions in the wishlist by type"""
+        """Get a list of sessions in the wishlist by speaker"""
         prof = self._getProfileFromUser()
         sess_keys = [ndb.Key(urlsafe=wssk) for wssk in prof.sessionWishlist]
         sessions = ndb.get_multi(sess_keys)
@@ -967,7 +967,7 @@ class ConferenceApi(remote.Service):
             http_method='GET',
             name='getFeaturedSpeaker')
     def getFeaturedSpeaker(self, request):
-        """Get the featured speaker from memcache or with getFeaturedSpeakerByAppearances()"""
+        """Get the featured speaker from the cache or create it"""
         fSpeaker = None
 
         # get Conference object from request; bail if not found
