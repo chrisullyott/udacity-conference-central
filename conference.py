@@ -17,6 +17,7 @@ __author__ = 'wesc+api@google.com (Wesley Chun)'
 
 from datetime import datetime
 
+import re
 import endpoints
 import logging
 from protorpc import messages
@@ -58,9 +59,9 @@ from collections import Counter
 EMAIL_SCOPE = endpoints.EMAIL_SCOPE
 API_EXPLORER_CLIENT_ID = endpoints.API_EXPLORER_CLIENT_ID
 MEMCACHE_ANNOUNCEMENTS_KEY = "RECENT_ANNOUNCEMENTS"
+MEMCACHE_FSPEAKER_PREFIX = "featured-speaker-"
 ANNOUNCEMENT_TPL = ('Last chance to attend! The following conferences '
                     'are nearly sold out: %s')
-MEMCACHE_FEAT_SPEAKER_KEY = 'FEATURED_SPEAKER';
 
 CONF_DEFAULTS = {
     "city": "Default City",
@@ -158,6 +159,12 @@ def mostCommonInList(listOfValues):
       			highestCount = value
       			mostCommon = key
   	return [mostCommon, highestCount]
+
+def slugify(text):
+    _punct_re = re.compile(r'[\t !"#$%&\'()*\-/<=>?@\[\\\]^_`{|},.:;]+')
+    lst = _punct_re.split(text.lower())
+    lst = filter(len, lst)
+    return unicode('-'.join(lst))
 
 
 # ! - - - BEGIN CLASS - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -947,8 +954,9 @@ class ConferenceApi(remote.Service):
         speakerWithMostAppearances = appearanceCalc[0]
         speakerAppearanceCount = appearanceCalc[1]
 
+        featuredSpeakerCacheKey = MEMCACHE_FSPEAKER_PREFIX + slugify(conf.name)
         if speakerAppearanceCount >= 2:
-            memcache.set(MEMCACHE_FEAT_SPEAKER_KEY, speakerWithMostAppearances)
+            memcache.set(featuredSpeakerCacheKey, speakerWithMostAppearances)
             fSpeaker = speakerWithMostAppearances
 
         return fSpeaker
@@ -970,7 +978,8 @@ class ConferenceApi(remote.Service):
                 'No conference found with key: %s' % request.websafeConferenceKey)
 
         # check memcache for the featured speaker
-        cachedSpeaker = memcache.get(MEMCACHE_FEAT_SPEAKER_KEY)
+        featuredSpeakerCacheKey = MEMCACHE_FSPEAKER_PREFIX + slugify(conf.name)
+        cachedSpeaker = memcache.get(featuredSpeakerCacheKey)
 
         if cachedSpeaker:
             fSpeaker = cachedSpeaker
