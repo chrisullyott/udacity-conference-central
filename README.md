@@ -43,7 +43,9 @@ Forum post: [API Explorer Not Showing on Localhost](https://discussions.udacity.
 
 _I modeled my API endpoints after the Conference methods, making sure that when I defined Session, it was a child entity of Conference, in the same way that a Conference is a child of the creator (a Profile). I created Sessions as a standalone Entity, and the Session Wishlist as an attribute of the Profile containing the web-safe keys of each Session._
 
-##### Think about other types of queries that would b euseful for this application. Describe the purpose of two new queries and write the code that would perform them.
+_I set the fields of a Session to require three data points: "name", "typeOfSession", and "speaker", because I felt like a session could not logically exist without knowing these. I set the "duration" field as an integer type in order to accept the number of minutes that the session covers. For "startTime", this would accept an integer as well, in order to accept a Unix timestamp such as_ `1454386900`_._ _The websafe entity key for the Session is output via_ `SessionForm` _to make wishlist add and remove requests possible for the app._
+
+##### Think about other types of queries that would be useful for this application. Describe the purpose of two new queries and write the code that would perform them.
 
 _My two extra queries are: "getWishlistSessionsByType" and "getWishlistSessionsBySpeaker" which would allow the user to filter their own wishlist by type of session and also by speaker. This would be helpful for the user when managing their list of conference sessions and helping them to make sure that they will be attending a variety of sessions and seeing a variety of speakers._
 
