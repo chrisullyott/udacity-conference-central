@@ -930,8 +930,8 @@ class ConferenceApi(remote.Service):
 # ! - - - FEATURED SPEAKER - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     @staticmethod
-    def _updateFeaturedSpeaker(websafeConferenceKey):
-        """Get the featured speaker by counting session appearances, and cache."""
+    def _cacheFeaturedSpeaker(websafeConferenceKey):
+        """Calculate the featured speaker (by counting session appearances) and cache it."""
         fSpeaker = None
 
         # get Conference object from request; bail if not found
@@ -955,6 +955,7 @@ class ConferenceApi(remote.Service):
         speakerAppearanceCount = appearanceCalc[1]
 
         featuredSpeakerCacheKey = MEMCACHE_FSPEAKER_PREFIX + slugify(conf.name)
+
         if speakerAppearanceCount >= 2:
             memcache.set(featuredSpeakerCacheKey, speakerWithMostAppearances)
             fSpeaker = speakerWithMostAppearances
@@ -967,7 +968,7 @@ class ConferenceApi(remote.Service):
             http_method='GET',
             name='getFeaturedSpeaker')
     def getFeaturedSpeaker(self, request):
-        """Get the featured speaker from the cache or create it"""
+        """Get the featured speaker stored in the cache"""
         fSpeaker = None
 
         # get Conference object from request; bail if not found
@@ -977,17 +978,13 @@ class ConferenceApi(remote.Service):
             raise endpoints.NotFoundException(
                 'No conference found with key: %s' % request.websafeConferenceKey)
 
-        # check memcache for the featured speaker
         featuredSpeakerCacheKey = MEMCACHE_FSPEAKER_PREFIX + slugify(conf.name)
-        cachedSpeaker = memcache.get(featuredSpeakerCacheKey)
-
-        if cachedSpeaker:
-            fSpeaker = cachedSpeaker
-        else:
-            fSpeaker = self._updateFeaturedSpeaker(request.websafeConferenceKey)
+        fSpeaker = memcache.get(featuredSpeakerCacheKey)
 
         return StringMessage(data=fSpeaker)
 
+
+# ! - - - REGISTER API - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 api = endpoints.api_server([ConferenceApi]) # register API
 
