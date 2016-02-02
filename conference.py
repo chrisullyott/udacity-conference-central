@@ -71,7 +71,7 @@ CONF_DEFAULTS = {
 
 SESS_DEFAULTS = {
     "typeOfSession": "lecture",
-    "duration": "90"
+    "duration": 90  # (90 minutes)
 }
 
 OPERATORS = {
