@@ -785,11 +785,16 @@ class ConferenceApi(remote.Service):
 
         # copy SessionForm/ProtoRPC Message into dict
         data = {field.name: getattr(request, field.name) for field in request.all_fields()}
+
+        # process dates and times into strings
         if data['date']:
             data['date'] = datetime.strptime(data['date'][:10], "%Y-%m-%d").date()
+        if data['startTime']:
+            data['startTime'] = datetime.strptime(data['startTime'][:10], "%H:%M").time()
 
         # delete websafeConferenceKey, it is already available as the parent key
         del data['websafeConferenceKey']
+        del data['websafeKey']
 
         # add default values for those missing (both data model & outbound Message)
         for df in SESS_DEFAULTS:
@@ -829,6 +834,8 @@ class ConferenceApi(remote.Service):
             if hasattr(sess, field.name):
                 # convert Date to date string; just copy others
                 if field.name.endswith('date'):
+                    setattr(sf, field.name, str(getattr(sess, field.name)))
+                elif field.name.endswith('Time'):
                     setattr(sf, field.name, str(getattr(sess, field.name)))
                 else:
                     setattr(sf, field.name, getattr(sess, field.name))

@@ -104,7 +104,7 @@ class Session(ndb.Model):
     highlights    = ndb.StringProperty()
     duration      = ndb.IntegerProperty()
     date          = ndb.DateProperty()
-    startTime     = ndb.IntegerProperty()
+    startTime     = ndb.TimeProperty()
 
 class SessionForm(messages.Message):
     """SessionForm -- Session outbound form message"""
@@ -114,7 +114,7 @@ class SessionForm(messages.Message):
     highlights    = messages.StringField(4)
     duration      = messages.IntegerField(5)
     date          = messages.StringField(6)
-    startTime     = messages.IntegerField(7)
+    startTime     = messages.StringField(7) #TimeProperty()
     websafeKey    = messages.StringField(8)
 
 class SessionForms(messages.Message):
